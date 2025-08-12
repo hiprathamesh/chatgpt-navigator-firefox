@@ -1,0 +1,34 @@
+{
+  "manifest_version": 2,
+  "name": "ChatGPT Navigator",
+  "version": "1.0",
+  "description": "Navigate long ChatGPT conversations with a sidebar showing all your prompts",
+  "permissions": [
+    "activeTab",
+    "*://chat.openai.com/*",
+    "*://chatgpt.com/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["*://chat.openai.com/*", "*://chatgpt.com/*"],
+      "js": ["content.js"],
+      "css": ["styles.css"],
+      "run_at": "document_end"
+    }
+  ],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
+  "browser_action": {
+    "default_popup": "popup.html",
+    "default_title": "ChatGPT Navigator"
+  },
+  "applications": {
+    "gecko": {
+      "id": "chatgpt-navigator@addon.local",
+      "strict_min_version": "109.0"
+    }
+  }
+}
