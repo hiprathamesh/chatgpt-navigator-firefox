@@ -333,10 +333,19 @@ class ChatGPTNavigator {
     // Only scan for prompts if a chat is open
     if (!this.isChatOpen()) {
       const promptsContainer = document.getElementById('chatgpt-nav-prompts');
+      const pinnedContainer = document.getElementById('chatgpt-nav-pinned');
+      
       // Clear existing content safely
       while (promptsContainer.firstChild) {
         promptsContainer.removeChild(promptsContainer.firstChild);
       }
+      
+      // Clear pinned prompts section
+      while (pinnedContainer.firstChild) {
+        pinnedContainer.removeChild(pinnedContainer.firstChild);
+      }
+      pinnedContainer.style.display = 'none';
+      
       promptsContainer.appendChild(this.createNoChatMessage());
       return;
     }
