@@ -27,7 +27,7 @@
   },
   "browser_specific_settings": {
     "gecko": {
-      "id": "chatgpt-navigator@addon.local",
+      "id": "chatgpt-navigator-firefox@addon.royalp",
       "strict_min_version": "109.0"
     }
   }
