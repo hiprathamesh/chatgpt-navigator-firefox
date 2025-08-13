@@ -333,7 +333,11 @@ class ChatGPTNavigator {
     // Only scan for prompts if a chat is open
     if (!this.isChatOpen()) {
       const promptsContainer = document.getElementById('chatgpt-nav-prompts');
-      promptsContainer.innerHTML = this.getNoChatMessage();
+      // Clear existing content safely
+      while (promptsContainer.firstChild) {
+        promptsContainer.removeChild(promptsContainer.firstChild);
+      }
+      promptsContainer.appendChild(this.createNoChatMessage());
       return;
     }
 
@@ -773,20 +777,6 @@ class ChatGPTNavigator {
     container.appendChild(subtitle);
     
     return container;
-  }
-
-  getNoChatMessage() {
-    return `
-      <div class="no-chat-message">
-        <div class="no-chat-icon">
-          <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="m3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z"/>
-          </svg>
-        </div>
-        <div class="no-chat-title">No Chat Open</div>
-        <div class="no-chat-subtitle">Open a conversation to navigate through your prompts and responses</div>
-      </div>
-    `;
   }
 }
 
