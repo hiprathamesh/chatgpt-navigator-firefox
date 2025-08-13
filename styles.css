@@ -70,9 +70,10 @@
   right: 0;
   background: #000;
   color: white;
-  padding: 6px 8px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 8px;
   font-size: 12px;
+  font-weight: 600;
   white-space: nowrap;
   z-index: 1000;
   pointer-events: none;
@@ -272,12 +273,12 @@
 /* Floating toggle button for collapsed sidebar */
 .chatgpt-nav-floating-button {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
-  width: 48px;
-  height: 48px;
+  bottom: 32px;
+  right: 32px;
+  width: 56px;
+  height: 56px;
   background: #303030;
-  border: 1px solid #404040;
+  border: 0.25px solid #404040;
   border-radius: 50%;
   color: #ffffff;
   cursor: w-resize;
@@ -286,17 +287,32 @@
   justify-content: center;
   z-index: 10000;
   transition: all 0.3s ease;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
 }
 
 .chatgpt-nav-floating-button:hover {
-  background: #404040;
-  transform: scale(1.05);
-  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.4);
+  background: #454545;
 }
 
 .chatgpt-nav-floating-button.show {
   display: flex;
+}
+
+.chatgpt-nav-floating-button:hover::after {
+  content: 'Open sidebar';
+  position: absolute;
+  top: 50%;
+  right: 100%;
+  transform: translateY(-50%);
+  background: #000;
+  color: white;
+  padding: 3px 8px;
+  border-radius: 8px;
+  font-size: 12px;
+  font-weight: 600;
+  white-space: nowrap;
+  z-index: 1000;
+  pointer-events: none;
+  margin-right: 8px;
 }
 
 .chatgpt-nav-floating-button svg {

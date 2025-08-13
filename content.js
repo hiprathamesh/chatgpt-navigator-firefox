@@ -2,7 +2,7 @@
 class ChatGPTNavigator {
   constructor() {
     this.sidebar = null;
-    this.isCollapsed = false;
+    this.isCollapsed = this.loadSidebarState();
     this.prompts = [];
     this.pinnedPrompts = this.loadPinnedPromptsForCurrentChat();
     this.observer = null;
@@ -21,7 +21,7 @@ class ChatGPTNavigator {
   }
 
   getCurrentChatId() {
-    // Extract chat ID from URL like https://chatgpt.com/c/6898f7d8-4b04-832d-992b-03c8fd267b65
+    // Extract chat ID from URL like https://chatgpt.com/c/chat-code
     const url = window.location.href;
     const match = url.match(/\/c\/([a-f0-9-]+)/);
     return match ? match[1] : null;
@@ -36,6 +36,14 @@ class ChatGPTNavigator {
     if (!chatId) return [];
     const allPinnedChats = JSON.parse(localStorage.getItem('chatgpt-nav-pinned-chats') || '{}');
     return allPinnedChats[chatId] || [];
+  }
+
+  loadSidebarState() {
+    return localStorage.getItem('chatgpt-nav-sidebar-collapsed') === 'true';
+  }
+
+  saveSidebarState() {
+    localStorage.setItem('chatgpt-nav-sidebar-collapsed', this.isCollapsed.toString());
   }
 
   savePinnedPromptsForCurrentChat() {
@@ -73,6 +81,19 @@ class ChatGPTNavigator {
 
     // Add event listeners
     this.setupEventListeners();
+
+    // Apply initial collapsed state
+    if (this.isCollapsed) {
+      this.sidebar.classList.add('collapsed');
+      const toggleBtn = document.getElementById('chatgpt-nav-toggle');
+      const toggleIcon = toggleBtn.querySelector('svg');
+      const floatingButton = document.getElementById('chatgpt-nav-floating-button');
+      
+      toggleIcon.style.transform = 'rotate(180deg)';
+      if (floatingButton) {
+        floatingButton.classList.add('show');
+      }
+    }
 
     // Start observing for new messages
     this.startObserving();
@@ -275,6 +296,9 @@ class ChatGPTNavigator {
         floatingButton.classList.remove('show');
       }
     }
+
+    // Save the sidebar state to localStorage
+    this.saveSidebarState();
   }
 
   collapseSidebar() {
@@ -290,6 +314,9 @@ class ChatGPTNavigator {
     if (floatingButton) {
       floatingButton.classList.add('show');
     }
+
+    // Save the sidebar state to localStorage
+    this.saveSidebarState();
   }
 
   startObserving() {
@@ -334,6 +361,12 @@ class ChatGPTNavigator {
     if (!this.isChatOpen()) {
       const promptsContainer = document.getElementById('chatgpt-nav-prompts');
       const pinnedContainer = document.getElementById('chatgpt-nav-pinned');
+      
+      // Check if containers exist before trying to manipulate them
+      if (!promptsContainer || !pinnedContainer) {
+        console.warn('Sidebar containers not found, skipping scan');
+        return;
+      }
       
       // Clear existing content safely
       while (promptsContainer.firstChild) {
@@ -396,6 +429,12 @@ class ChatGPTNavigator {
   updatePromptsList(messageElements) {
     const promptsContainer = document.getElementById('chatgpt-nav-prompts');
 
+    // Check if container exists before manipulating it
+    if (!promptsContainer) {
+      console.warn('Prompts container not found, skipping update');
+      return;
+    }
+
     if (messageElements.length === 0) {
       // Clear existing content safely
       while (promptsContainer.firstChild) {
@@ -430,6 +469,13 @@ class ChatGPTNavigator {
 
   filterPrompts() {
     const promptsContainer = document.getElementById('chatgpt-nav-prompts');
+    
+    // Check if container exists before manipulating it
+    if (!promptsContainer) {
+      console.warn('Prompts container not found, skipping filter');
+      return;
+    }
+    
     const allPromptItems = promptsContainer.querySelectorAll('.chatgpt-nav-prompt-item');
 
     allPromptItems.forEach(item => {
@@ -444,6 +490,12 @@ class ChatGPTNavigator {
 
   updatePinnedPrompts() {
     const pinnedContainer = document.getElementById('chatgpt-nav-pinned');
+    
+    // Check if container exists before manipulating it
+    if (!pinnedContainer) {
+      console.warn('Pinned container not found, skipping update');
+      return;
+    }
     
     // Clear existing content safely
     while (pinnedContainer.firstChild) {
@@ -493,6 +545,13 @@ class ChatGPTNavigator {
 
   updatePromptsPinStatus() {
     const promptsContainer = document.getElementById('chatgpt-nav-prompts');
+    
+    // Check if container exists before manipulating it
+    if (!promptsContainer) {
+      console.warn('Prompts container not found, skipping pin status update');
+      return;
+    }
+    
     const allPromptItems = promptsContainer.querySelectorAll('.chatgpt-nav-prompt-item:not(.pinned-item)');
 
     allPromptItems.forEach(item => {
