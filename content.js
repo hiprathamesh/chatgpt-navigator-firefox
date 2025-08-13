@@ -62,31 +62,8 @@ class ChatGPTNavigator {
     this.sidebar.id = 'chatgpt-navigator-sidebar';
     this.sidebar.className = 'chatgpt-nav-sidebar';
 
-    // Create sidebar content
-    this.sidebar.innerHTML = `
-      <div class="chatgpt-nav-header">
-        <h3>Chat Navigation</h3>
-        <button class="chatgpt-nav-toggle" id="chatgpt-nav-toggle">
-          <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <rect x="0.727273" y="0.727273" width="14.5455" height="12.8485" rx="3.15151" stroke="#AFAFAF" stroke-width="1.45455"/>
-            <line x1="5.57639" y1="1.45508" x2="5.57639" y2="12.849" stroke="#AFAFAF" stroke-width="1.45455"/>
-          </svg>
-        </button>
-      </div>
-      <div class="chatgpt-nav-content">
-        <div class="chatgpt-nav-search">
-          <svg class="search-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <circle cx="11" cy="11" r="8"/>
-            <path d="m21 21-4.35-4.35"/>
-          </svg>
-          <input type="text" placeholder="Search chats..." id="chatgpt-nav-search-input" class="search-input">
-        </div>
-        <div class="chatgpt-nav-pinned" id="chatgpt-nav-pinned"></div>
-        <div class="chatgpt-nav-prompts" id="chatgpt-nav-prompts">
-          ${this.isChatOpen() ? '<div class="loading">Loading prompts...</div>' : this.getNoChatMessage()}
-        </div>
-      </div>
-    `;
+    // Create sidebar content safely
+    this.createSidebarContent();
 
     // Add sidebar to page
     document.body.appendChild(this.sidebar);
@@ -104,16 +81,144 @@ class ChatGPTNavigator {
     setTimeout(() => this.scanForPrompts(), 1000);
   }
 
+  createSidebarContent() {
+    // Create header
+    const header = document.createElement('div');
+    header.className = 'chatgpt-nav-header';
+    
+    const title = document.createElement('h3');
+    title.textContent = 'Chat Navigation';
+    
+    const toggleBtn = document.createElement('button');
+    toggleBtn.className = 'chatgpt-nav-toggle';
+    toggleBtn.id = 'chatgpt-nav-toggle';
+    
+    const toggleSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    toggleSvg.setAttribute('width', '16');
+    toggleSvg.setAttribute('height', '15');
+    toggleSvg.setAttribute('viewBox', '0 0 16 15');
+    toggleSvg.setAttribute('fill', 'none');
+    
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', '0.727273');
+    rect.setAttribute('y', '0.727273');
+    rect.setAttribute('width', '14.5455');
+    rect.setAttribute('height', '12.8485');
+    rect.setAttribute('rx', '3.15151');
+    rect.setAttribute('stroke', '#AFAFAF');
+    rect.setAttribute('stroke-width', '1.45455');
+    
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '5.57639');
+    line.setAttribute('y1', '1.45508');
+    line.setAttribute('x2', '5.57639');
+    line.setAttribute('y2', '12.849');
+    line.setAttribute('stroke', '#AFAFAF');
+    line.setAttribute('stroke-width', '1.45455');
+    
+    toggleSvg.appendChild(rect);
+    toggleSvg.appendChild(line);
+    toggleBtn.appendChild(toggleSvg);
+    
+    header.appendChild(title);
+    header.appendChild(toggleBtn);
+    
+    // Create content container
+    const content = document.createElement('div');
+    content.className = 'chatgpt-nav-content';
+    
+    // Create search section
+    const search = document.createElement('div');
+    search.className = 'chatgpt-nav-search';
+    
+    const searchIcon = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    searchIcon.setAttribute('class', 'search-icon');
+    searchIcon.setAttribute('width', '16');
+    searchIcon.setAttribute('height', '16');
+    searchIcon.setAttribute('viewBox', '0 0 24 24');
+    searchIcon.setAttribute('fill', 'none');
+    searchIcon.setAttribute('stroke', 'currentColor');
+    searchIcon.setAttribute('stroke-width', '2');
+    
+    const circle = document.createElementNS('http://www.w3.org/2000/svg', 'circle');
+    circle.setAttribute('cx', '11');
+    circle.setAttribute('cy', '11');
+    circle.setAttribute('r', '8');
+    
+    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    path.setAttribute('d', 'm21 21-4.35-4.35');
+    
+    searchIcon.appendChild(circle);
+    searchIcon.appendChild(path);
+    
+    const searchInput = document.createElement('input');
+    searchInput.type = 'text';
+    searchInput.placeholder = 'Search chats...';
+    searchInput.id = 'chatgpt-nav-search-input';
+    searchInput.className = 'search-input';
+    
+    search.appendChild(searchIcon);
+    search.appendChild(searchInput);
+    
+    // Create pinned section
+    const pinned = document.createElement('div');
+    pinned.className = 'chatgpt-nav-pinned';
+    pinned.id = 'chatgpt-nav-pinned';
+    
+    // Create prompts section
+    const prompts = document.createElement('div');
+    prompts.className = 'chatgpt-nav-prompts';
+    prompts.id = 'chatgpt-nav-prompts';
+    
+    if (this.isChatOpen()) {
+      const loading = document.createElement('div');
+      loading.className = 'loading';
+      loading.textContent = 'Loading prompts...';
+      prompts.appendChild(loading);
+    } else {
+      prompts.appendChild(this.createNoChatMessage());
+    }
+    
+    content.appendChild(search);
+    content.appendChild(pinned);
+    content.appendChild(prompts);
+    
+    this.sidebar.appendChild(header);
+    this.sidebar.appendChild(content);
+  }
+
   createFloatingButton() {
     const floatingButton = document.createElement('button');
     floatingButton.id = 'chatgpt-nav-floating-button';
     floatingButton.className = 'chatgpt-nav-floating-button';
-    floatingButton.innerHTML = `
-      <svg width="16" height="15" viewBox="0 0 16 15" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="0.727273" y="0.727273" width="14.5455" height="12.8485" rx="3.15151" stroke="currentColor" stroke-width="1.45455"/>
-        <line x1="5.57639" y1="1.45508" x2="5.57639" y2="12.849" stroke="currentColor" stroke-width="1.45455"/>
-      </svg>
-    `;
+    
+    // Create SVG safely
+    const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    svg.setAttribute('width', '16');
+    svg.setAttribute('height', '15');
+    svg.setAttribute('viewBox', '0 0 16 15');
+    svg.setAttribute('fill', 'none');
+    
+    const rect = document.createElementNS('http://www.w3.org/2000/svg', 'rect');
+    rect.setAttribute('x', '0.727273');
+    rect.setAttribute('y', '0.727273');
+    rect.setAttribute('width', '14.5455');
+    rect.setAttribute('height', '12.8485');
+    rect.setAttribute('rx', '3.15151');
+    rect.setAttribute('stroke', 'currentColor');
+    rect.setAttribute('stroke-width', '1.45455');
+    
+    const line = document.createElementNS('http://www.w3.org/2000/svg', 'line');
+    line.setAttribute('x1', '5.57639');
+    line.setAttribute('y1', '1.45508');
+    line.setAttribute('x2', '5.57639');
+    line.setAttribute('y2', '12.849');
+    line.setAttribute('stroke', 'currentColor');
+    line.setAttribute('stroke-width', '1.45455');
+    
+    svg.appendChild(rect);
+    svg.appendChild(line);
+    floatingButton.appendChild(svg);
 
     floatingButton.addEventListener('click', () => {
       this.toggleSidebar();
@@ -279,12 +384,21 @@ class ChatGPTNavigator {
     const promptsContainer = document.getElementById('chatgpt-nav-prompts');
 
     if (messageElements.length === 0) {
-      promptsContainer.innerHTML = '<div class="no-prompts">No prompts found</div>';
+      // Clear existing content safely
+      while (promptsContainer.firstChild) {
+        promptsContainer.removeChild(promptsContainer.firstChild);
+      }
+      const noPrompts = document.createElement('div');
+      noPrompts.className = 'no-prompts';
+      noPrompts.textContent = 'No prompts found';
+      promptsContainer.appendChild(noPrompts);
       return;
     }
 
-    // Clear existing prompts
-    promptsContainer.innerHTML = '';
+    // Clear existing prompts safely
+    while (promptsContainer.firstChild) {
+      promptsContainer.removeChild(promptsContainer.firstChild);
+    }
 
     messageElements.forEach((element, index) => {
       const promptText = this.extractPromptText(element);
@@ -296,6 +410,9 @@ class ChatGPTNavigator {
 
     // Update pinned prompts section
     this.updatePinnedPrompts();
+    
+    // Update pin status for all items after creating them
+    this.updatePromptsPinStatus();
   }
 
   filterPrompts() {
@@ -314,7 +431,11 @@ class ChatGPTNavigator {
 
   updatePinnedPrompts() {
     const pinnedContainer = document.getElementById('chatgpt-nav-pinned');
-    pinnedContainer.innerHTML = '';
+    
+    // Clear existing content safely
+    while (pinnedContainer.firstChild) {
+      pinnedContainer.removeChild(pinnedContainer.firstChild);
+    }
 
     if (this.pinnedPrompts.length === 0) {
       pinnedContainer.style.display = 'none';
@@ -359,7 +480,7 @@ class ChatGPTNavigator {
 
   updatePromptsPinStatus() {
     const promptsContainer = document.getElementById('chatgpt-nav-prompts');
-    const allPromptItems = promptsContainer.querySelectorAll('.chatgpt-nav-prompt-item');
+    const allPromptItems = promptsContainer.querySelectorAll('.chatgpt-nav-prompt-item:not(.pinned-item)');
 
     allPromptItems.forEach(item => {
       const text = item.querySelector('.prompt-text').textContent;
@@ -367,15 +488,33 @@ class ChatGPTNavigator {
       const isPinned = this.pinnedPrompts.some(p => p.text === text);
 
       if (pinBtn) {
-        const pinIcon = isPinned
-          ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-               <path d="M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z"/>
-             </svg>`
-          : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
-               <path d="M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z"/>
-             </svg>`;
+        // Clear existing content
+        while (pinBtn.firstChild) {
+          pinBtn.removeChild(pinBtn.firstChild);
+        }
+        
+        // Create pin icon safely
+        const pinSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        pinSvg.setAttribute('width', '14');
+        pinSvg.setAttribute('height', '14');
+        pinSvg.setAttribute('viewBox', '0 0 24 24');
+        pinSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+        
+        const pinPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        pinPath.setAttribute('d', 'M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z');
+        
+        if (isPinned) {
+          pinSvg.setAttribute('fill', 'currentColor');
+          pinSvg.setAttribute('stroke', 'none');
+        } else {
+          pinSvg.setAttribute('fill', 'none');
+          pinSvg.setAttribute('stroke', 'currentColor');
+          pinSvg.setAttribute('stroke-width', '2');
+        }
+        
+        pinSvg.appendChild(pinPath);
+        pinBtn.appendChild(pinSvg);
 
-        pinBtn.innerHTML = pinIcon;
         pinBtn.title = isPinned ? 'Unpin chat' : 'Pin chat';
         pinBtn.classList.toggle('pinned', isPinned);
       }
@@ -435,21 +574,45 @@ class ChatGPTNavigator {
     const item = document.createElement('div');
     item.className = 'chatgpt-nav-prompt-item';
 
-    const pinIcon = isPinned
-      ? `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-           <path d="M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z"/>
-         </svg>`
-      : `<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" xmlns="http://www.w3.org/2000/svg">
-           <path d="M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z"/>
-         </svg>`;
+    // Create prompt number
+    const numberDiv = document.createElement('div');
+    numberDiv.className = 'prompt-number';
+    numberDiv.textContent = number;
 
-    item.innerHTML = `
-      <div class="prompt-number">${number}</div>
-      <div class="prompt-text">${this.escapeHtml(text)}</div>
-      <button class="pin-button" title="${isPinned ? 'Unpin chat' : 'Pin chat'}">
-        ${pinIcon}
-      </button>
-    `;
+    // Create prompt text
+    const textDiv = document.createElement('div');
+    textDiv.className = 'prompt-text';
+    textDiv.textContent = text;
+
+    // Create pin button
+    const pinButton = document.createElement('button');
+    pinButton.className = 'pin-button';
+    pinButton.title = isPinned ? 'Unpin chat' : 'Pin chat';
+    
+    const pinSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    pinSvg.setAttribute('width', '14');
+    pinSvg.setAttribute('height', '14');
+    pinSvg.setAttribute('viewBox', '0 0 24 24');
+    pinSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    
+    const pinPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pinPath.setAttribute('d', 'M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z');
+    
+    if (isPinned) {
+      pinSvg.setAttribute('fill', 'currentColor');
+    } else {
+      pinSvg.setAttribute('fill', 'none');
+      pinSvg.setAttribute('stroke', 'currentColor');
+      pinSvg.setAttribute('stroke-width', '2');
+    }
+    
+    pinSvg.appendChild(pinPath);
+    pinButton.appendChild(pinSvg);
+
+    // Assemble the item
+    item.appendChild(numberDiv);
+    item.appendChild(textDiv);
+    item.appendChild(pinButton);
 
     item.addEventListener('click', () => {
       this.scrollToElement(element);
@@ -460,7 +623,6 @@ class ChatGPTNavigator {
     });
 
     // Pin button functionality
-    const pinButton = item.querySelector('.pin-button');
     pinButton.addEventListener('click', (e) => {
       e.stopPropagation();
       this.togglePin(text, element, number);
@@ -473,17 +635,38 @@ class ChatGPTNavigator {
     const item = document.createElement('div');
     item.className = 'chatgpt-nav-prompt-item pinned-item';
 
-    const pinIcon = `<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-           <path d="M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z"/>
-         </svg>`;
+    // Create prompt number
+    const numberDiv = document.createElement('div');
+    numberDiv.className = 'prompt-number';
+    numberDiv.textContent = number;
 
-    item.innerHTML = `
-      <div class="prompt-number">${number}</div>
-      <div class="prompt-text">${this.escapeHtml(text)}</div>
-      <button class="pin-button pinned" title="Unpin chat">
-        ${pinIcon}
-      </button>
-    `;
+    // Create prompt text
+    const textDiv = document.createElement('div');
+    textDiv.className = 'prompt-text';
+    textDiv.textContent = text;
+
+    // Create pin button
+    const pinButton = document.createElement('button');
+    pinButton.className = 'pin-button pinned';
+    pinButton.title = 'Unpin chat';
+    
+    const pinSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    pinSvg.setAttribute('width', '14');
+    pinSvg.setAttribute('height', '14');
+    pinSvg.setAttribute('viewBox', '0 0 24 24');
+    pinSvg.setAttribute('fill', 'currentColor');
+    pinSvg.setAttribute('xmlns', 'http://www.w3.org/2000/svg');
+    
+    const pinPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    pinPath.setAttribute('d', 'M16 12V4H17V2H7V4H8V12L6 14V16H11V22H13V16H18V14L16 12Z');
+    
+    pinSvg.appendChild(pinPath);
+    pinButton.appendChild(pinSvg);
+
+    // Assemble the item
+    item.appendChild(numberDiv);
+    item.appendChild(textDiv);
+    item.appendChild(pinButton);
 
     item.addEventListener('click', () => {
       // Find the current element by its prompt number
@@ -500,7 +683,6 @@ class ChatGPTNavigator {
     });
 
     // Pin button functionality
-    const pinButton = item.querySelector('.pin-button');
     pinButton.addEventListener('click', (e) => {
       e.stopPropagation();
       this.togglePin(text, null, number);
@@ -557,10 +739,40 @@ class ChatGPTNavigator {
     });
   }
 
-  escapeHtml(text) {
-    const div = document.createElement('div');
-    div.textContent = text;
-    return div.innerHTML;
+  createNoChatMessage() {
+    const container = document.createElement('div');
+    container.className = 'no-chat-message';
+    
+    const iconDiv = document.createElement('div');
+    iconDiv.className = 'no-chat-icon';
+    
+    const iconSvg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+    iconSvg.setAttribute('width', '32');
+    iconSvg.setAttribute('height', '32');
+    iconSvg.setAttribute('viewBox', '0 0 24 24');
+    iconSvg.setAttribute('fill', 'none');
+    iconSvg.setAttribute('stroke', 'currentColor');
+    iconSvg.setAttribute('stroke-width', '2');
+    
+    const iconPath = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+    iconPath.setAttribute('d', 'm3 21 1.9-5.7a8.5 8.5 0 1 1 3.8 3.8z');
+    
+    iconSvg.appendChild(iconPath);
+    iconDiv.appendChild(iconSvg);
+    
+    const title = document.createElement('div');
+    title.className = 'no-chat-title';
+    title.textContent = 'No Chat Open';
+    
+    const subtitle = document.createElement('div');
+    subtitle.className = 'no-chat-subtitle';
+    subtitle.textContent = 'Open a conversation to navigate through your prompts and responses';
+    
+    container.appendChild(iconDiv);
+    container.appendChild(title);
+    container.appendChild(subtitle);
+    
+    return container;
   }
 
   getNoChatMessage() {

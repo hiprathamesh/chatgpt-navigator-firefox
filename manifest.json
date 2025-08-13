@@ -25,7 +25,7 @@
     "default_popup": "popup.html",
     "default_title": "ChatGPT Navigator"
   },
-  "applications": {
+  "browser_specific_settings": {
     "gecko": {
       "id": "chatgpt-navigator@addon.local",
       "strict_min_version": "109.0"
