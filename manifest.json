@@ -1,7 +1,7 @@
 {
   "manifest_version": 2,
   "name": "ChatGPT Navigator",
-  "version": "1.0",
+  "version": "1.0.1",
   "description": "Navigate long ChatGPT conversations with a sidebar showing all your prompts",
   "permissions": [
     "activeTab",
