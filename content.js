@@ -265,6 +265,14 @@ class ChatGPTNavigator {
       this.filterPrompts();
     });
 
+    // Keyboard shortcut for toggling sidebar (Ctrl+Shift+/)
+    document.addEventListener('keydown', (e) => {
+      if (e.ctrlKey && e.shiftKey && e.key === '?') {
+        e.preventDefault();
+        this.toggleSidebar();
+      }
+    });
+
     // Handle clicks outside sidebar to close on mobile
     document.addEventListener('click', (e) => {
       if (!this.sidebar.contains(e.target) && window.innerWidth <= 768) {
